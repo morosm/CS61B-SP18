@@ -84,4 +84,9 @@ public class Planet{
         this.yyVel = vy;
         this.yyPos = py;
     }
+
+    public void draw(){
+        String imgFilePath = String.format("images/%s",imgFileName);
+        StdDraw.picture(xxPos, yyPos, imgFilePath);
+    }
 }

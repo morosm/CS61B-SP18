@@ -25,20 +25,59 @@ public class NBody{
         double radius = in.readDouble();
         Planet[] rst = new Planet[amount];
 
-        for(int i = 0; i < amount - 1; i ++){
-            String line = in.readLine();
-            String[] elements = line.split(" ");
-            if(elements.length != 6) return new Planet[0];
-            
-            String imgFileName = elements[5];
-            elements[5] = "";
-            double[] dElements = Arrays.stream(elements)
-                .mapToDouble(e -> Double.parseDouble(e))
-                .toArray();
-            Planet p = new Planet(dElements[0], dElements[1], dElements[2], dElements[3], dElements[4], imgFileName);
+        for(int i = 0; i < amount; i ++){
+            Planet p = new Planet(
+                in.readDouble(),
+                in.readDouble(),
+                in.readDouble(),
+                in.readDouble(),
+                in.readDouble(),
+                in.readString());
             rst[i] = p;
         }
 
         return rst;
+    }
+
+    public static void main(String[] args) {
+        double T = Double.parseDouble(args[0]);
+        double dt = Double.parseDouble(args[1]);
+        String fileName = args[2];
+
+        double radius = readRadius(fileName);
+        Planet[] planets = readPlanets(fileName);
+
+
+        double width = 512;
+        double height = 512;
+        StdDraw.setCanvasSize(512,512);
+        StdDraw.setScale(-radius, radius);
+        StdDraw.enableDoubleBuffering();
+
+        int planetSize = planets.length;
+        double[] xForces = new double[planetSize];
+        double[] yForces = new double[planetSize];
+        for(double time = 0; time < T; time += dt){
+            //calculate all forces and then update together
+            for(int j = 0; j < planetSize; j ++){
+                xForces[j] = planets[j].calcNetForceExertedByX(planets);
+                yForces[j] = planets[j].calcNetForceExertedByY(planets);
+            }
+            for(int j = 0; j < planetSize; j ++) planets[j].update(time, xForces[j], yForces[j]);
+
+            StdDraw.picture(0, 0, "images/starfield.jpg");
+            for(Planet p : planets) p.draw();
+            StdDraw.show();
+            StdDraw.pause(10);
+        }
+
+        StdOut.printf("%d\n", planets.length);
+        StdOut.printf("%.2e\n", radius);
+        for (int i = 0; i < planets.length; i++) {
+            StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
+                          planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
+                          planets[i].yyVel, planets[i].mass, planets[i].imgFileName);   
+        }
+
     }
 }
