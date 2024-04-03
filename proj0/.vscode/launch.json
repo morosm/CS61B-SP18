@@ -6,10 +6,17 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestTime",
+            "request": "launch",
+            "mainClass": "TestTime",
+            "projectName": "proj0"
+        },
+        {
+            "type": "java",
             "name": "Test NBody",
             "request": "launch",
             "mainClass": "NBody",
-            "args": "1570000 2500.0 data/kevin.txt"
+            "args": "500000000 25000 data/planets.txt"
         },
         {
             "type": "java",
