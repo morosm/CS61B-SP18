@@ -1,5 +1,5 @@
-public class LinkedListDeque<T> implements Deque<T>{
-    protected class Node {
+public class LinkedListDeque<T>{
+    private class Node {
         public T value;
         public Node next;
         public Node pre;
@@ -24,9 +24,6 @@ public class LinkedListDeque<T> implements Deque<T>{
         size = 0;
     }
 
-    /**
-     * no looping or recursion
-     */
     public void addFirst(T item) {
         size += 1;
         var current = new Node(item);
@@ -39,9 +36,6 @@ public class LinkedListDeque<T> implements Deque<T>{
         sentinel.next = current;
     }
 
-    /**
-     * no looping or recursion
-     */
     public void addLast(T item) {
         size += 1;
         var current = new Node(item);
@@ -58,9 +52,6 @@ public class LinkedListDeque<T> implements Deque<T>{
         return size == 0;
     }
 
-    /**
-     *  must take constant time.
-     */
     public int size() {
         return size;
     }
@@ -71,15 +62,12 @@ public class LinkedListDeque<T> implements Deque<T>{
         }
 
         var p = sentinel;
-        for(int i = 0; i < size; i ++){
+        for(int i = 0; i < size; i++){
             p = p.next;
             System.out.println(p.value);
         }
     }
 
-    /**
-     * no looping or recursion
-     */
     public T removeFirst() {
         size -= 1;
         var removed = sentinel.next;
@@ -91,9 +79,6 @@ public class LinkedListDeque<T> implements Deque<T>{
         return removed.value;
     }
 
-    /**
-     * no looping or recursion
-     */
     public T removeLast() {
         size -= 1;
         var removed = sentinel.pre;
@@ -105,11 +90,6 @@ public class LinkedListDeque<T> implements Deque<T>{
         return removed.value;
     }
 
-
-
-    /**
-     * must use iteration, not recursion.
-     */
     public T get(int index) {
         var p = sentinel;
 
@@ -120,11 +100,6 @@ public class LinkedListDeque<T> implements Deque<T>{
         return p.value;
     }
 
-    /**
-     * Same as get, but uses recursion.
-     * @param index
-     * @return
-     */
     public T getRecursive(int index){
         var p = sentinel;
 

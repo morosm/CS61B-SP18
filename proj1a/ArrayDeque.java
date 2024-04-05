@@ -1,9 +1,10 @@
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T>{
     private T[] items;
     private int arraySize;
     private int first;
     private int size;
     private static final int REFACTOR = 2;
+    private static final double RATIO = 0.25;
 
     public ArrayDeque(){
         /*The starting size of your array should be 8. */
@@ -13,13 +14,9 @@ public class ArrayDeque<T> implements Deque<T> {
         size = 0;
     }
 
-    /**
-     * take constant time, except during resizing operations.
-     */
-    @Override
     public void addFirst(T item) {
         if(first == 0){
-            resize();
+            resize(arraySize * REFACTOR);
         }
         
         first -= 1;
@@ -27,33 +24,27 @@ public class ArrayDeque<T> implements Deque<T> {
         items[first] = item;
     }
 
-    /**
-     * take constant time, except during resizing operations.
-     */
-    @Override
     public void addLast(T item) {
+        if(size == 0){
+            addFirst(item);
+            return;
+        }
         if(first + size == arraySize){
-            resize();
+            resize(arraySize * REFACTOR);
         }
 
         size += 1;
         items[last()] = item;
     }
 
-    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /**
-     * must take constant time.
-     */
-    @Override
     public int size() {
         return size;
     }
 
-    @Override
     public void printDeque() {
         T rst = (T)new Object();
         for(int i = 0; i < size; i ++){
@@ -62,38 +53,37 @@ public class ArrayDeque<T> implements Deque<T> {
         }
     }
 
-    /**
-     * take constant time, except during resizing operations.
-     */
-    @Override
     public T removeFirst() {
+        if(size == 0){
+            return null;
+        }
         var rst = items[first];
         first += 1;
         size -= 1;
+        if(size/(double)arraySize < RATIO){
+            resize(arraySize/REFACTOR);
+        }
         return rst;
     }
 
-    /**
-     * take constant time, except during resizing operations.
-     */
-    @Override
     public T removeLast() {
+        if(size == 0){
+            return null;
+        }
         var rst = items[last()];
         size -= 1;
+        if(size/(double)arraySize < RATIO){
+            resize(arraySize/REFACTOR);
+        }
         return rst;
     }
 
-    /**
-     * must take constant time.
-     */
-    @Override
     public T get(int index) {
         var rst = items[first + index];
         return rst;
     }
 
-    private void resize(){
-        var newArraySize = size * REFACTOR;
+    private void resize(int newArraySize){
         var newItems = (T []) new Object[newArraySize];
 
         var newF = calFirst(first, size, newArraySize);
