@@ -38,7 +38,12 @@ public class ArrayDeque<T>{
     }
 
     public int size() {
-        return (tail - head) & (items.length - 1);
+        if(head == tail)
+            return 0;
+        else if(tail > head)
+            return tail - head;
+        else
+            return items.length - head + tail;
     }
 
     public void printDeque() {
@@ -89,7 +94,7 @@ public class ArrayDeque<T>{
             j = (j + 1) & (items.length - 1);
         } while(j != tail);
 
-        tail = i - 1;
+        tail = i & (num - 1);
         items = newItems;
     }
 
@@ -97,7 +102,7 @@ public class ArrayDeque<T>{
         int initialCapacity = MIN_INITIAL_CAPACITY;
 
         //整个操作相当于*2,
-        if(numElements > initialCapacity){
+        if(numElements >= initialCapacity){
             initialCapacity = numElements;
             initialCapacity |= (initialCapacity >>> 1);
             initialCapacity |= (initialCapacity >>> 2);
