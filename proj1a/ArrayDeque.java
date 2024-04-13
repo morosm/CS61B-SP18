@@ -1,106 +1,117 @@
+import java.util.NoSuchElementException;
+
 public class ArrayDeque<T>{
-    private T[] items;
-    private int arraySize;
-    private int first;
-    private int size;
-    private static final int REFACTOR = 2;
-    private static final double RATIO = 0.25;
+    private Object[] items;
+    private int head;
+    private int tail;
+    private static final int MIN_INITIAL_CAPACITY = 8;
 
     public ArrayDeque(){
         /*The starting size of your array should be 8. */
-        arraySize = 8;
-        items = (T []) new Object[arraySize];
-        first = calFirst(0, 0, arraySize);
-        size = 0;
+        items = new Object[MIN_INITIAL_CAPACITY];
+        head = tail = 0;
     }
 
+    //use the previous slot
     public void addFirst(T item) {
-        if(first == 0){
-            resize(arraySize * REFACTOR);
-        }
-        
-        first -= 1;
-        size += 1;
-        items[first] = item;
+        if(item == null)
+            throw new NullPointerException();
+        head = (head - 1) & (items.length - 1);
+        items[head] = item;
+        if(head == tail)
+            doubleCapacity();
     }
 
+    //this slot can be used
     public void addLast(T item) {
-        if(size == 0){
-            addFirst(item);
-            return;
-        }
-        if(first + size == arraySize){
-            resize(arraySize * REFACTOR);
-        }
-
-        size += 1;
-        items[last()] = item;
+        if(item == null)
+            throw new NullPointerException();
+        items[tail] = item;
+        //tail = (tail + 1)%items.length
+        tail = (tail + 1) & (items.length - 1);
+        if(tail == head)
+            doubleCapacity();
     }
 
     public boolean isEmpty() {
-        return size == 0;
+        return size() == 0;
     }
 
     public int size() {
-        return size;
+        return (tail - head) & (items.length - 1);
     }
 
     public void printDeque() {
-        T rst = (T)new Object();
-        for(int i = 0; i < size; i ++){
-            rst = items[first + i];
-            System.out.println(rst.toString());
-        }
+        if(size() == 0)
+            System.out.println("Empty Deque");
+        int i = head;
+        do {
+            System.out.print(items[i].toString());
+            i = (i + 1) & (items.length - 1);
+        } while(i != tail);
     }
 
     public T removeFirst() {
-        if(size == 0){
-            return null;
-        }
-        var rst = items[first];
-        first += 1;
-        size -= 1;
-        if(size/(double)arraySize < RATIO){
-            resize(arraySize/REFACTOR);
-        }
-        return rst;
+        var rst = items[head];
+        if (rst == null)
+            throw new NoSuchElementException();
+
+        head = (head + 1) & (items.length - 1);
+        return (T)rst;
     }
 
     public T removeLast() {
-        if(size == 0){
-            return null;
-        }
-        var rst = items[last()];
-        size -= 1;
-        if(size/(double)arraySize < RATIO){
-            resize(arraySize/REFACTOR);
-        }
-        return rst;
+        var index = (tail - 1) & (items.length - 1);
+        var rst = items[index];
+        if(rst == null)
+            throw new NoSuchElementException();
+
+        tail = index;
+        return (T)rst;
     }
 
     public T get(int index) {
-        var rst = items[first + index];
-        return rst;
+        if(index >= items.length || index < 0)
+            throw new IndexOutOfBoundsException();
+
+        var realIndex = (head + index) & (items.length - 1);
+        return (T)items[realIndex];
     }
 
-    private void resize(int newArraySize){
-        var newItems = (T []) new Object[newArraySize];
+    private void doubleCapacity(){
+        var num = calculateSize(items.length);
+        var newItems = new Object[num];
 
-        var newF = calFirst(first, size, newArraySize);
-        System.arraycopy(items, first, newItems, newF, size);
+        int i = head;
+        int j = head;
+        do {
+            newItems[i++] = items[j];
+            j = (j + 1) & (items.length - 1);
+        } while(j != tail);
 
-        arraySize = newArraySize;
-        first = newF;
+        tail = i - 1;
         items = newItems;
     }
 
-    private int calFirst(int start, int count, int length){
-        var newF = (length - count)/2;
-        return newF;
-    }
+    private int calculateSize(int numElements){
+        int initialCapacity = MIN_INITIAL_CAPACITY;
 
-    private int last(){
-        var rst = first + size - 1;
-        return rst;
+        //整个操作相当于*2,
+        if(numElements > initialCapacity){
+            initialCapacity = numElements;
+            initialCapacity |= (initialCapacity >>> 1);
+            initialCapacity |= (initialCapacity >>> 2);
+            initialCapacity |= (initialCapacity >>> 4);
+            initialCapacity |= (initialCapacity >>> 8);
+            initialCapacity |= (initialCapacity >>> 16);
+            initialCapacity ++;
+        }
+
+        //最大容量只有2的30次方
+        //0100 0000 0000 0000 ....
+        if(initialCapacity < 0)
+            initialCapacity >>>= 1;
+
+        return initialCapacity;
     }
 }
