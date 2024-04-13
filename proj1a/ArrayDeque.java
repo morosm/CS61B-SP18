@@ -5,6 +5,7 @@ public class ArrayDeque<T>{
     private int head;
     private int tail;
     private static final int MIN_INITIAL_CAPACITY = 8;
+    private static final double MAX_RATIO = 0.25;
 
     public ArrayDeque(){
         /*The starting size of your array should be 8. */
@@ -19,7 +20,7 @@ public class ArrayDeque<T>{
         head = (head - 1) & (items.length - 1);
         items[head] = item;
         if(head == tail)
-            doubleCapacity();
+            resize(calculateSize(items.length));
     }
 
     //this slot can be used
@@ -30,7 +31,7 @@ public class ArrayDeque<T>{
         //tail = (tail + 1)%items.length
         tail = (tail + 1) & (items.length - 1);
         if(tail == head)
-            doubleCapacity();
+            resize(calculateSize(items.length));
     }
 
     public boolean isEmpty() {
@@ -48,7 +49,7 @@ public class ArrayDeque<T>{
 
     public void printDeque() {
         if(size() == 0)
-            System.out.println("Empty Deque");
+            return;
         int i = head;
         do {
             System.out.print(items[i].toString());
@@ -58,20 +59,22 @@ public class ArrayDeque<T>{
 
     public T removeFirst() {
         var rst = items[head];
-        if (rst == null)
-            throw new NoSuchElementException();
-
         head = (head + 1) & (items.length - 1);
+
+        if((double)size()/items.length <= MAX_RATIO){
+            resize(calculateSize(size()));
+        }
         return (T)rst;
     }
 
     public T removeLast() {
         var index = (tail - 1) & (items.length - 1);
         var rst = items[index];
-        if(rst == null)
-            throw new NoSuchElementException();
-
         tail = index;
+
+        if((double)size()/items.length <= MAX_RATIO){
+            resize(calculateSize(size()));
+        }
         return (T)rst;
     }
 
@@ -83,18 +86,19 @@ public class ArrayDeque<T>{
         return (T)items[realIndex];
     }
 
-    private void doubleCapacity(){
-        var num = calculateSize(items.length);
+    private void resize(int num){
         var newItems = new Object[num];
 
-        int i = head;
+        int i = 0;
         int j = head;
         do {
-            newItems[i++] = items[j];
+            newItems[i] = items[j];
+            i = (i + 1) & (num - 1);
             j = (j + 1) & (items.length - 1);
         } while(j != tail);
 
-        tail = i & (num - 1);
+        head = 0;
+        tail = i;
         items = newItems;
     }
 

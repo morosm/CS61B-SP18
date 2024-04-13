@@ -84,8 +84,12 @@ public class LinkedListDequeTest {
 
 	public static void addTest(){
 		var l = new ArrayDeque<Integer>();
-		for(int i = 0; i <8; i++){
+		for(int i = 0; i <16; i++){
 			l.addLast(i);
+		}
+		l.printDeque();
+		for(int i = 0; i <16; i++){
+			l.removeFirst();
 		}
 		l.printDeque();
 	}
