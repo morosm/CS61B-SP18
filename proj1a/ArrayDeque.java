@@ -58,6 +58,9 @@ public class ArrayDeque<T>{
     }
 
     public T removeFirst() {
+        if(size() == 0)
+            return null;
+        
         var rst = items[head];
         head = (head + 1) & (items.length - 1);
 
@@ -68,6 +71,9 @@ public class ArrayDeque<T>{
     }
 
     public T removeLast() {
+        if(size() == 0)
+            return null;
+
         var index = (tail - 1) & (items.length - 1);
         var rst = items[index];
         tail = index;
