@@ -1,6 +1,4 @@
-import java.util.NoSuchElementException;
-
-public class ArrayDeque<T>{
+public class ArrayDeque<T> implements Deque<T> {
     private Object[] items;
     private int head;
     private int tail;
