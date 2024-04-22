@@ -81,12 +81,14 @@ public class IntList {
      */
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //pointer
-        var temp = A.rest;
-        while(temp.rest != null){
-            temp = temp.rest;
+        if(A == null){
+            return B;
         }
-        temp.rest = B;
+        var ptr = A;
+        while(ptr.rest != null){
+            ptr = ptr.rest;
+        }
+        ptr.rest = B;
         return A;
     }
 
