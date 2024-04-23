@@ -12,6 +12,7 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     //use the previous slot
+    @Override
     public void addFirst(T item) {
         if(item == null)
             throw new NullPointerException();
@@ -22,6 +23,7 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     //this slot can be used
+    @Override
     public void addLast(T item) {
         if(item == null)
             throw new NullPointerException();
@@ -32,10 +34,12 @@ public class ArrayDeque<T> implements Deque<T> {
             resize(calculateSize(items.length));
     }
 
+    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    @Override
     public int size() {
         if(head == tail)
             return 0;
@@ -45,6 +49,7 @@ public class ArrayDeque<T> implements Deque<T> {
             return items.length - head + tail;
     }
 
+    @Override
     public void printDeque() {
         if(size() == 0)
             return;
@@ -55,6 +60,7 @@ public class ArrayDeque<T> implements Deque<T> {
         } while(i != tail);
     }
 
+    @Override
     public T removeFirst() {
         if(size() == 0)
             return null;
@@ -67,6 +73,7 @@ public class ArrayDeque<T> implements Deque<T> {
         return (T)rst;
     }
 
+    @Override
     public T removeLast() {
         if(size() == 0)
             return null;
@@ -81,6 +88,7 @@ public class ArrayDeque<T> implements Deque<T> {
         return (T)rst;
     }
 
+    @Override
     public T get(int index) {
         if(index >= items.length || index < 0)
             throw new IndexOutOfBoundsException();
