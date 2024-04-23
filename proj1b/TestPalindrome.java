@@ -18,11 +18,13 @@ public class TestPalindrome {
 
     @Test
     public void testIsPalindrome() {
-        assertFalse(palindrome.isPalindrome("horse"));
-        assertFalse(palindrome.isPalindrome("rancor"));
         assertTrue(palindrome.isPalindrome("racecar"));
         assertTrue(palindrome.isPalindrome("noon"));
-        assertTrue(palindrome.isPalindrome("aaA"));
+        assertTrue(palindrome.isPalindrome("%oo%"));
+
+        assertFalse(palindrome.isPalindrome("horse"));
+        assertFalse(palindrome.isPalindrome("rancor"));
+        assertFalse(palindrome.isPalindrome("aaA"));
     }
 
     @Test
