@@ -82,4 +82,30 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     public boolean isFull() {
         return super.isFull();
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return this.new MyIterator();
+    }
+
+    private class MyIterator implements Iterator<T> {
+        private int ptr;
+        public MyIterator() {
+            ptr = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return (ptr  < fillCount);
+        }
+
+        @Override
+        public T next() {
+            int next = (first + ptr) % capacity;
+            T rst = rb[next];
+            ptr ++;
+            return rst;
+        }
+    }
+
 }

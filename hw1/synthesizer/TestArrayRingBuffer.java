@@ -26,11 +26,16 @@ public class TestArrayRingBuffer
         assertTrue(x.isFull());
         assertFalse(x.isEmpty());
 
+        for(double d : x){
+            System.out.println(d);
+        }
+
         assertTrue(x.dequeue() == 33.1);
         x.dequeue();
         x.dequeue();
         x.dequeue();
         assertTrue(x.isEmpty());
         assertFalse(x.isFull());
+
     }
 }
