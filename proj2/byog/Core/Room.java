@@ -5,41 +5,36 @@ import java.util.List;
 import java.util.Random;
 
 public class Room extends Generator{
-    private final Position position;
+    private int minX;
+    private int minY;
+    private int maxX;
+    private int maxY;
 
-    // |width - position - width| 用法0 0，一开始的时候就写错了
-    private final int width;
-    private final int height;
-
-    public static final int MAXWIDTH = 4;
-    public static final int MAXHEIGHT = 4;
-
-    public Room(Position position, int width, int height){
-        this.position = position;
-        this.width = width;
-        this.height = height;
-    }
-    public Room(int x, int y, int width, int height){
-        this(new Position(x,y), width, height);
+    private static final int MAXWIDTH = 6;
+    private static final int MAXHEIGHT = 6;
+    public Room(int minX, int minY, int maxX, int maxY){
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
     }
 
+    /**
+     * 方法待优化，上方和右侧有空白区域，不能完全填充
+     * @param random
+     * @param boundX
+     * @param boundY
+     * @return
+     */
     public static Room generateRoom(Random random, int boundX, int boundY){
-        while(true){
-            int x = random.nextInt(0,boundX - MAXWIDTH);
-            int y = random.nextInt(0, boundY - MAXHEIGHT);
-            int width = random.nextInt(1,MAXWIDTH + 1);
-            int height = random.nextInt(1, MAXHEIGHT + 1);
-            Room room = new Room(x,y,width,height);
-            if(isInBound(room,boundX, boundY)) return room;
-        }
-    }
-
-    private static boolean isInBound(Room r, int boundX, int boundY){
-        if(r.position.x - (r.width + 1) < 0) return false;
-        if(r.position.x + r.width + 1 > boundX) return false;
-        if(r.position.y - (r.height + 1) < 0) return false;
-        if(r.position.y + r.height + 1 > boundY) return false;
-        return true;
+        //1是为了考虑墙的厚度
+        int minX = random.nextInt(1,boundX - 1 - MAXWIDTH);
+        int minY = random.nextInt(1, boundY - 1 - MAXHEIGHT);
+        //0, 如果生成(1,1,1,1)那么这个矩形就是room就是一个点
+        //1，保证房间宽度最少为2
+        int maxX = minX + random.nextInt(1, MAXWIDTH);
+        int maxY = minY + random.nextInt(1, MAXWIDTH);
+        return new Room(minX,minY,maxX,maxY);
     }
 
     public boolean canBePlaced(List<Room> rooms){
@@ -51,28 +46,28 @@ public class Room extends Generator{
         return true;
     }
     public boolean isOverlapped(Room that) {
-        boolean xSafe = notIntersected(this.position.x, that.position.x, this.width, that.width);
-        boolean ySafe = notIntersected(this.position.y, that.position.y, this.height, that.height);
-        return  !(xSafe && ySafe);
+        int[] rec1 = new int[]{this.minX, this.minY, this.maxX, this.maxY};
+        int[] rec2 = new int[]{that.minX, that.minY, that.maxX, that.maxY};
+        return isRectangleOverlap(rec1, rec2);
     }
 
-    private boolean notIntersected(int r1p, int r2p, int r1d, int r2d){
-        //this(0) -(1) -(2) -(3) that(4)
-        int voidGrids = Math.abs(r1p - r2p) - 1;
-        //可以共享一堵墙，所以+1
-        return voidGrids >= (r1d + r2d + 1);
+    private boolean isRectangleOverlap(int[] rec1, int[] rec2) {
+        boolean notOverLap = checkLinear(rec1[0], rec1[2], rec2[0], rec2[2]) || checkLinear(rec1[1], rec1[3], rec2[1], rec2[3]);
+        return !notOverLap;
     }
-
+    private boolean checkLinear(int x1, int x2, int x3, int x4){
+        boolean checkRec = (x1 < x2) && (x3 < x4);
+        //x3>x2,最接近时两个点相邻
+        //+1，预留1墙厚
+        boolean notOverLap = (x3 > x2 + 1) || (x1 > x4 + 1);
+        return checkRec && notOverLap;
+    }
     @Override
     public void build(TETile[][] world) {
         buildFloor(world);
         buildWall(world);
     }
     private void buildFloor(TETile[][] world){
-        int minX = this.position.x - width;
-        int minY = this.position.y - height;
-        int maxX = this.position.x + width;
-        int maxY = this.position.y + height;
         for(int px = minX; px <= maxX; px++){
             for(int py = minY; py <= maxY; py++){
                 world[px][py] = floor;
@@ -80,25 +75,15 @@ public class Room extends Generator{
         }
     }
     private void buildWall(TETile[][] world){
-        int minX = this.position.x - width - 1;
-        int minY = this.position.y - height - 1;
-        int maxX = this.position.x + width + 1;
-        int maxY = this.position.y + height + 1;
-        if(minX < 0){
-            var b  = 1;
-        }
-        if(minY < 0){
-            var b  = 1;
-        }
         //horizontal
-        for(int px = minX; px <= maxX; px++){
-            world[px][minY] = wall;
-            world[px][maxY] = wall;
+        for(int px = minX - 1; px <= maxX + 1; px++){
+            world[px][minY - 1] = wall;
+            world[px][maxY + 1] = wall;
         }
         //vertical
-        for(int py = minY + 1; py < maxY; py++){
-            world[minX][py] = wall;
-            world[maxX][py] = wall;
+        for(int py = minY; py <= maxY; py++){
+            world[minX - 1][py] = wall;
+            world[maxX + 1][py] = wall;
         }
     }
 }

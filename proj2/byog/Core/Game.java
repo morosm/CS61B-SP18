@@ -14,6 +14,7 @@ public class Game {
     public static final int WIDTH = 40;
     public static final int HEIGHT = 40;
     public static final Random RANDOM = new Random(11111);
+    private static  final int MAXFAILURE = 30;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -37,7 +38,7 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        int count = 5;
+        int count = 111;
         TETile[][] finalWorldFrame = initializeFrame(WIDTH,HEIGHT);
 
         List<Room> rooms = generateRooms(count);
@@ -64,11 +65,15 @@ public class Game {
         List<Room> rooms = new ArrayList<Room>();
         for (int i = 0; i < count; i ++){
             boolean isGenerated = false;
+            int failure = 0;
             while(!isGenerated){
                 Room r = Room.generateRoom(RANDOM, WIDTH, HEIGHT);
                 if(r.canBePlaced(rooms)){
                     rooms.add(r);
                     isGenerated = true;
+                }
+                if(++failure > MAXFAILURE){
+                    break;
                 }
             }
         }
