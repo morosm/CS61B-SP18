@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Random;
 
 public class Room extends Generator{
-    private int minX;
-    private int minY;
-    private int maxX;
-    private int maxY;
+    public final int minX;
+    public final int minY;
+    public final int maxX;
+    public final int maxY;
 
-    private static final int MAXWIDTH = 6;
-    private static final int MAXHEIGHT = 6;
+    private static final int MAXWIDTH = 10;
+    private static final int MAXHEIGHT = 10;
     public Room(int minX, int minY, int maxX, int maxY){
         this.minX = minX;
         this.minY = minY;
