@@ -2,12 +2,18 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int WIDTH = 40;
+    public static final int HEIGHT = 40;
+    public static final Random RANDOM = new Random(11111);
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -31,8 +37,41 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
+        int count = 5;
+        TETile[][] finalWorldFrame = initializeFrame(WIDTH,HEIGHT);
 
-        TETile[][] finalWorldFrame = null;
+        List<Room> rooms = generateRooms(count);
+        for(Room r : rooms){
+            r.build(finalWorldFrame);
+        }
+
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
+    }
+    private TETile[][] initializeFrame(int w, int h){
+        TETile[][] frame = new TETile[w][h];
+        for(int x = 0; x < w; x ++){
+            for(int y = 0; y < h; y ++){
+                frame[x][y] = Tileset.NOTHING;
+            }
+        }
+        return frame;
+    }
+
+    private List<Room> generateRooms(int count){
+        List<Room> rooms = new ArrayList<Room>();
+        for (int i = 0; i < count; i ++){
+            boolean isGenerated = false;
+            while(!isGenerated){
+                Room r = Room.generateRoom(RANDOM, WIDTH, HEIGHT);
+                if(r.canBePlaced(rooms)){
+                    rooms.add(r);
+                    isGenerated = true;
+                }
+            }
+        }
+        return rooms;
     }
 }
