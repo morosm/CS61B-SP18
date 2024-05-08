@@ -13,10 +13,19 @@ public class Room extends Generator{
     private static final int MAXWIDTH = 10;
     private static final int MAXHEIGHT = 10;
     public Room(int minX, int minY, int maxX, int maxY){
+        if(minX >= maxX) throw new IllegalArgumentException("wrong x");
+        if(minY >= maxY) throw new IllegalArgumentException("wrong y");
+
         this.minX = minX;
         this.minY = minY;
         this.maxX = maxX;
         this.maxY = maxY;
+    }
+
+    public Position getCenter(){
+        int x = minX + (maxX - minX)/2;
+        int y = minY + (maxY - minY)/2;
+        return new Position(x,y);
     }
 
     /**
@@ -85,5 +94,9 @@ public class Room extends Generator{
             world[minX - 1][py] = wall;
             world[maxX + 1][py] = wall;
         }
+    }
+
+    public int calDis(Room that){
+        return getCenter().calDis(that.getCenter());
     }
 }

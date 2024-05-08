@@ -7,4 +7,10 @@ public class Position {
         this.x = x;
         this.y = y;
     }
+
+    public int calDis(Position that){
+        int xd = Math.abs(this.x - that.x);
+        int yd = Math.abs(this.y - that.y);
+        return (int)Math.sqrt(xd * xd + yd * yd);
+    }
 }
