@@ -14,7 +14,7 @@ public class Game {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 40;
     public static final int HEIGHT = 40;
-    public static final Random RANDOM = new Random(11121);
+    public static final Random RANDOM = new Random(152);
     private static  final int MAXFAILURE = 30;
 
     /**
@@ -39,7 +39,7 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        int count = 5;
+        int count = 111;
         TETile[][] finalWorldFrame = initializeFrame(WIDTH,HEIGHT);
 
         List<Room> rooms = generateRooms(count);

@@ -25,17 +25,17 @@ public class TestHallway {
 
     public static void testTypical(TETile[][] world){
         Room r1 = new Room(5,5,8,8);
-        //Room r2 = new Room(15,5,22,8);
+        Room r2 = new Room(15,5,22,8);
         Room r3 = new Room(15,25,22,33);
-        //Room r4 = new Room(5, 23, 8,33);
+        Room r4 = new Room(5, 23, 8,33);
 
         r1.build(world);
-        //r2.build(world);
+        r2.build(world);
         r3.build(world);
-        //r4.build(world);
+        r4.build(world);
 
-        //Hallway hw = Hallway.generateHallway(random, r2, r4);
-        //hw.build(world);
+        Hallway hw = Hallway.generateHallway(random, r2, r4);
+        hw.build(world);
         Hallway hw2 = Hallway.generateHallway(random, r1, r3);
         hw2.build(world);
     }

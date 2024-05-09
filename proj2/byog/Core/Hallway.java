@@ -110,7 +110,7 @@ public class Hallway extends Generator{
         int p1X = r1.maxX + 1;
         int p1Y = ran.nextInt(r1.minY + 1, r1.maxY + 1);
         int p2X = ran.nextInt(r2.minX + 1, r2.maxX + 1);
-        int p2Y = r1.minY - 1;
+        int p2Y = r2.minY - 1;
         var rst = new Position[]{
                 new Position(p1X, p1Y),
                 new Position(p2X, p1Y),
