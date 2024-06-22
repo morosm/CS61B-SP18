@@ -3,13 +3,44 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class BSTMap<K,V> implements Map61B {
+public class BSTMap<K extends Comparable<K>,V> implements Map61B<K,V> {
+    Node node;
+    int size;
+
+    private class Node{
+        private K key;
+        private V value;
+        private Node left;
+        private Node right;
+
+        private Node(){
+
+        }
+
+        private Node(K key, V value){
+            init(key, value);
+        }
+
+        private void init(K key, V value){
+            this.key = key;
+            this.value = value;
+            this.left = new Node();
+            this.right = new Node();
+        }
+    }
+
+    public BSTMap(){
+        this.node = new Node();
+        this.size = 0;
+    }
+
     /**
      * Removes all of the mappings from this map.
      */
     @Override
     public void clear() {
-
+        this.node = new Node(null, null);
+        this.size = 0;
     }
 
     /**
@@ -17,8 +48,9 @@ public class BSTMap<K,V> implements Map61B {
      * @return
      */
     @Override
-    public boolean containsKey(Object key) {
-        return false;
+    public boolean containsKey(K key){
+        Node n = get(this.node, key);
+        return key.equals(n.key);
     }
 
     /**
@@ -26,8 +58,22 @@ public class BSTMap<K,V> implements Map61B {
      * @return
      */
     @Override
-    public Object get(Object key) {
-        return null;
+    public V get(K key) {
+        Node n = get(this.node, key);
+        return n.value;
+    }
+
+    private Node get(Node n, K key){
+        if(n.key == null)
+            return n;
+
+        int c = key.compareTo(n.key);
+        if(c < 0)
+            return get(n.left, key);
+        else if(c > 0)
+            return get(n.right, key);
+        else
+            return n;
     }
 
     /**
@@ -35,7 +81,7 @@ public class BSTMap<K,V> implements Map61B {
      */
     @Override
     public int size() {
-        return 0;
+        return this.size;
     }
 
     /**
@@ -43,8 +89,26 @@ public class BSTMap<K,V> implements Map61B {
      * @param value
      */
     @Override
-    public void put(Object key, Object value) {
+    public void put(K key, V value) {
+        put(this.node, key, value);
+    }
 
+    private Node put(Node n, K key, V value){
+        if(n.key == null){
+            n.init(key, value);
+            size ++;
+            return n;
+        }
+
+        int c = key.compareTo(n.key);
+        if(c < 0)
+            return put(n.left, key, value);
+        else if(c > 0)
+            return put(n.right, key, value);
+        else{
+            n.value = value;
+            return n;
+        }
     }
 
     /**
@@ -60,7 +124,7 @@ public class BSTMap<K,V> implements Map61B {
      * @return
      */
     @Override
-    public Object remove(Object key) {
+    public V remove(K key) {
         throw new UnsupportedOperationException();
     }
 
@@ -70,7 +134,7 @@ public class BSTMap<K,V> implements Map61B {
      * @return
      */
     @Override
-    public Object remove(Object key, Object value) {
+    public V remove(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
@@ -130,5 +194,9 @@ public class BSTMap<K,V> implements Map61B {
     @Override
     public Spliterator spliterator() {
         return Map61B.super.spliterator();
+    }
+
+    public void printInOrder(){
+
     }
 }
