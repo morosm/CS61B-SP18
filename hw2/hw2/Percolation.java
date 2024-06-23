@@ -42,6 +42,8 @@ public class Percolation {
     public void open(int row, int col){
         if(!validateLocation(row, col))
             throw new IndexOutOfBoundsException();
+        if(grids[row][col])
+            return;
         grids[row][col] = true;
         openCount += 1;
         unionNeighbors(row, col);
