@@ -3,11 +3,12 @@ package hw2;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    final int N;
-    final WeightedQuickUnionUF disjointSet;
+    private final int N;
+    private final int topIndex;
+    private final WeightedQuickUnionUF disjointSet;
     /* default = 0, open = 1, connected = 2*/
-    final State[][] grids;
-    int openCount;
+    private final boolean[][] grids;
+    private int openCount;
 
     /**
      * create N-by-N grid, with all sites initially blocked
@@ -17,16 +18,17 @@ public class Percolation {
         openCount = 0;
         this.N = N;
         int count = N * N + 1;
+        topIndex = count - 1;
         disjointSet = new WeightedQuickUnionUF(count);
 
-        grids = new State[N][N];
+        grids = new boolean[N][N];
         for(int i = 0; i < N; i++){
             for(int j = 0; j < N; j++){
-                grids[i][j] = State.NotSet;
+                grids[i][j] = false;
                 if(i == 0){
                     int loc = tryConvertLocation(i, j);
                     //connect top
-                    disjointSet.union(loc, 0);
+                    disjointSet.union(loc, topIndex);
                 }
             }
         }
@@ -40,7 +42,7 @@ public class Percolation {
     public void open(int row, int col){
         if(!validateLocation(row, col))
             throw new IndexOutOfBoundsException();
-        grids[row][col] = State.Open;
+        grids[row][col] = true;
         openCount += 1;
         unionNeighbors(row, col);
     }
@@ -56,7 +58,7 @@ public class Percolation {
     private void unionNeighbor(int thisLoc, int thatRow, int thatCol){
         if(!validateLocation(thatRow, thatCol))
             return;
-        if(grids[thatRow][thatCol] != State.Open)
+        if(!grids[thatRow][thatCol])
             return;
         int thatLoc = tryConvertLocation(thatRow, thatCol);
         disjointSet.union(thisLoc, thatLoc);
@@ -67,16 +69,16 @@ public class Percolation {
         if(!validateLocation(row, col))
             throw new IndexOutOfBoundsException();
         int loc = tryConvertLocation(row, col);
-        return grids[row][col] == State.Open;
+        return grids[row][col];
     }
 
     public boolean isFull(int row, int col){
         if(!validateLocation(row, col))
             throw new IndexOutOfBoundsException();
         int loc = tryConvertLocation(row, col);
-        if(!(grids[row][col] == State.Open))
+        if(!grids[row][col])
             return false;
-        if(!disjointSet.connected(loc, 0))
+        if(!disjointSet.connected(loc, topIndex))
             return false;
         return true;
     }
@@ -103,15 +105,10 @@ public class Percolation {
 
     private int tryConvertLocation(int row, int col){
         int loc = row * N + col;
-        return loc + 1;
+        return loc;
     }
 
     public static void main(String[] args){
 
-    }
-
-    private enum State{
-        NotSet,
-        Open,
     }
 }
