@@ -1,5 +1,7 @@
 package lab9;
 
+import java.security.Key;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -53,19 +55,44 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        var arrayMap = this.buckets[hash(key)];
+        return arrayMap.get(key);
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        if(loadFactor() > MAX_LF)
+            resize();
+
+        var arrayMap = this.buckets[hash(key)];
+        if(!arrayMap.containsKey(key)){
+            size++;
+        }
+        arrayMap.put(key, value);
+    }
+
+    private void resize(){
+        var oldBuckets = this.buckets;
+
+        //create new buckets
+        this.buckets = new ArrayMap[buckets.length << 1];
+        for (int i = 0; i < this.buckets.length; i += 1) {
+            this.buckets[i] = new ArrayMap<>();
+        }
+
+        //copy old values
+        for(int i = 0; i < oldBuckets.length; i++){
+            var keyset = oldBuckets[i].keySet();
+            for(var key : keyset)
+                put(key, oldBuckets[i].get(key));
+        }
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
-    public int size() {
-        throw new UnsupportedOperationException();
+    public int size(){
+        return size;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
@@ -73,7 +100,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> keyset = new HashSet<>();
+        for (int i = 0; i < this.buckets.length; i += 1) {
+            keyset.addAll(this.buckets[i].keySet());
+        }
+        return keyset;
     }
 
     /* Removes the mapping for the specified key from this map if exists.
