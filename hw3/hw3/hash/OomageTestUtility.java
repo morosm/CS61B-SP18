@@ -14,7 +14,8 @@ public class OomageTestUtility {
          */
         int[] buckets = new int[M];
         for(var oomage : oomages){
-            int i = (oomage.hashCode() & 0x7FFFFFFF) % M;
+            var hashCode = oomage.hashCode();
+            int i = (hashCode & 0x7FFFFFFF) % M;
             buckets[i] ++;
         }
 
