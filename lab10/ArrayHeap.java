@@ -103,15 +103,15 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     private void swim(int index) {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
-        if(index == 1)
+
+        if(index < 1)
             return;
 
-        int parent = parentIndex(index);
-        if(min(index, parent) == index){
-            swap(index, parent);
-            swim(parent);
+        int parentIndex = parentIndex(index);
+        if(min(index, parentIndex) == index){
+            swap(index, parentIndex);
+            swim(parentIndex);
         }
-        return;
     }
 
     /**
@@ -121,16 +121,13 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        int left = leftIndex(index);
-        int right = rightIndex(index);
+        if(leftIndex(index) > size)
+            return;
 
-        if(min(index, left) == left){
-            //可能因为是null而返回index,所以不可以返回
-            swap(index, left);
-            sink(left);
-        }else if (min(index, right) == right) {
-            swap(index, right);
-            sink(right);
+        int minChildIndex = min(leftIndex(index), rightIndex(index));
+        if(min(index, minChildIndex) == minChildIndex){
+            swap(index, minChildIndex);
+            sink(minChildIndex);
         }
     }
 
@@ -146,8 +143,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
 
         Node node = new ArrayHeap.Node(item, priority);
-        size ++;
-        contents[size] = node;
+        contents[++size] = node;
         swim(size);
     }
 
