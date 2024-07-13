@@ -177,10 +177,13 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
 
         T value = peek();
 
-        swap(1, size);
-        if(size > 1)
+        swap(1, size--);
+        if(size > 1){
             sink(1);
-        contents[size--] = null;
+            contents[size + 1] = null;
+        }else {
+            contents[1] = null;
+        }
 
         return value;
     }
