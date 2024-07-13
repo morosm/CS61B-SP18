@@ -1,5 +1,7 @@
 package hw3.hash;
 
+import com.sun.jdi.ArrayReference;
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -36,15 +38,31 @@ public class TestComplexOomage {
     /* TODO: Create a list of Complex Oomages called deadlyList
      * that shows the flaw in the hashCode function.
      */
-    /*
     @Test
     public void testWithDeadlyParams() {
         List<Oomage> deadlyList = new ArrayList<>();
 
-        // Your code here.
+        for(int i = 0; i < 100; i ++){
+            deadlyList.add(randomComplexOomage());
+        }
+        assertTrue(OomageTestUtility.haveNiceHashCodeSpread(deadlyList, 16));
+    }
 
-        assertTrue(OomageTestUtility.haveNiceHashCodeSpread(deadlyList, 10));
-    } */
+    private Oomage randomComplexOomage(){
+        int N = StdRandom.uniform(0, 10);
+        ArrayList<Integer> params = new ArrayList<>(N);
+        for (int i = 0; i < N; i += 1) {
+            params.add(StdRandom.uniform(0, 255));
+        }
+        //因为原方法只*256(n<<8), 所以只要最后4位数有一定规律，那么hash就一定会出问题
+        //解决办法就是使用质数去计算hash
+        for(int i = 0; i < 4; i ++){
+            int power = StdRandom.uniform(0, 8);
+            int value = (1 << power) - 1;
+            params.add(value);
+        }
+        return new ComplexOomage(params);
+    }
 
     /** Calls tests for SimpleOomage. */
     public static void main(String[] args) {
