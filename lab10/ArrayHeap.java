@@ -121,7 +121,14 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        int minChildIndex = min(leftIndex(index), rightIndex(index));
+        int minChildIndex = leftIndex(index);
+        if(minChildIndex > size)
+            return;
+
+        int right = rightIndex(index);
+        if(right < size && min(minChildIndex, right) == right)
+            minChildIndex = right;
+
         if(min(index, minChildIndex) == minChildIndex){
             swap(index, minChildIndex);
             if(minChildIndex <= size){
